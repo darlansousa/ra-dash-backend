@@ -31,10 +31,10 @@ var db = require('knex')({
 const complaints = require('./controllers/complaints')
 const complainers = require('./controllers/complainers')
 
-// App
+
 const app = express()
 
-// App Middleware
+
 const whitelist = ['http://localhost:3001']
 const corsOptions = {
   origin: function (origin, callback) {
@@ -50,12 +50,13 @@ app.use(cors(corsOptions))
 app.use(bodyParser.json())
 app.use(morgan('combined')) 
 
-// App Routes - Auth
 app.get('/', (req, res) => res.send('RA-Dash-Backend'))
 
 app.get('/complaints', (req, res) => complaints.getComplaints(req, res, db))
-app.post('/complaints', (req, res) => complaints.postComplaints(req, res, db))
-app.put('/complaints', (req, res) => complaints.putComplaints(req, res, db))
+app.get('/complaints/info', (req, res) => complaints.getComplaintsInfo(req, res, db))
+app.get('/complaints/:id', (req, res) => complaints.getComplaintsById(req, res, db))
+app.put('/complaints/:id/close', (req, res) => complaints.closeComplaints(req, res, db))
+app.put('/complaints/:id', (req, res) => complaints.putAllData(req, res, db))
 app.delete('/complaints', (req, res) => complaints.deleteComplaints(req, res, db))
 
 
@@ -64,7 +65,7 @@ app.post('/complainers', (req, res) => complainers.postComplainers(req, res, db)
 app.put('/complainers', (req, res) => complainers.putComplainers(req, res, db))
 app.delete('/complainers', (req, res) => complainers.deleteComplainers(req, res, db))
 
-// App Server Connection
+
 app.listen(process.env.PORT || 3000, () => {
   console.log(`app is running on port ${process.env.PORT || 3000}`)
 })
