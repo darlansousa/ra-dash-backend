@@ -29,7 +29,6 @@ var db = require('knex')({
 
 
 const complaints = require('./controllers/complaints')
-const complainers = require('./controllers/complainers')
 
 
 const app = express()
@@ -58,13 +57,6 @@ app.get('/complaints/:id', (req, res) => complaints.getComplaintsById(req, res, 
 app.put('/complaints/:id/close', (req, res) => complaints.closeComplaints(req, res, db))
 app.put('/complaints/:id', (req, res) => complaints.putAllData(req, res, db))
 app.delete('/complaints', (req, res) => complaints.deleteComplaints(req, res, db))
-
-
-app.get('/complainers', (req, res) => complainers.getComplainers(req, res, db))
-app.post('/complainers', (req, res) => complainers.postComplainers(req, res, db))
-app.put('/complainers', (req, res) => complainers.putComplainers(req, res, db))
-app.delete('/complainers', (req, res) => complainers.deleteComplainers(req, res, db))
-
 
 app.listen(process.env.PORT || 3000, () => {
   console.log(`app is running on port ${process.env.PORT || 3000}`)
