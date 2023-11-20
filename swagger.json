@@ -1,0 +1,222 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "RA Dash backend",
+        "description": "API RA Dash",
+        "version": "1.0"
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/complaints": {
+            "get": {
+                "description": "Retorna todas as reclamações registradas",
+                "operationId": "complaints_all",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filtro: Status da reclamação",
+                        "required": false
+                    },
+                    {
+                        "name": "sys_reason",
+                        "in": "query",
+                        "description": "Filtro: Motivo da reclamação",
+                        "required": false
+                    },
+                    {
+                        "name": "ai_classification",
+                        "in": "query",
+                        "description": "Filtro: Classificação feita pela IA",
+                        "required": false
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/complaints/{id}": {
+            "get": {
+                "description": "Retorna uma reclamação por id",
+                "operationId": "get_complaints_id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id da reclamação a ser retornado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {}
+            },
+            "put": {
+                "description": "Atualiza informações de uma reclamação existente",
+                "operationId": "update_complaints_id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id da reclamação a ser retornado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "complaint",
+                        "in": "body",
+                        "description": "Reclamação para atualização",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "ra_cod": {
+                                    "type": "string"
+                                },
+                                "ra_id": {
+                                    "type": "string"
+                                },
+                                "title": {
+                                    "type": "string"
+                                },
+                                "date_description": {
+                                    "type": "string"
+                                },
+                                "chanel": {
+                                    "type": "string"
+                                },
+                                "reason": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "id_occurrence": {
+                                    "type": "string"
+                                },
+                                "close_date": {
+                                    "type": "string"
+                                },
+                                "system_sub_reason": {
+                                    "type": "string"
+                                },
+                                "complainer_note": {
+                                    "type": "string"
+                                },
+                                "complaints_status": {
+                                    "type": "string"
+                                },
+                                "ai_classification": {
+                                    "type": "string"
+                                },
+                                "negotiate_again": {
+                                    "type": "string"
+                                },
+                                "complainer_id": {
+                                    "type": "int"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "cpf": {
+                                    "type": "string"
+                                },
+                                "uc": {
+                                    "type": "string"
+                                },
+                                "city": {
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "phone": {
+                                    "type": "string"
+                                },
+                                "is_client": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "description": "Remove uma reclamação por id",
+                "operationId": "delete_complaints_id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id da reclamação a ser retornado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/complaints/info": {
+            "get": {
+                "description": "Retorna métricas sobre o estado das reclamações",
+                "operationId": "complaints_info",
+                "responses": {}
+            }
+        },
+        "/complaints/{id}/close": {
+            "put": {
+                "description": "Atualiza informações de uma reclamação existente e setando como fechada",
+                "operationId": "update_close_complaints_id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id da reclamação a ser retornado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "complaint",
+                        "in": "body",
+                        "description": "Reclamação para atualização",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id_occurrence": {
+                                    "type": "string"
+                                },
+                                "close_date": {
+                                    "type": "string"
+                                },
+                                "system_sub_reason": {
+                                    "type": "string"
+                                },
+                                "complainer_note": {
+                                    "type": "string"
+                                },
+                                "negotiate_again": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        }
+    }
+}

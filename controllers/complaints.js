@@ -4,15 +4,15 @@ const getComplaints = (req, res, db) => {
     .innerJoin('complainers', 'complainers.id', 'complaints.complainer_id')
     .where((qb) => {
       if (status) {
-        qb.orWhere('complaints_status', '=', status);
+        qb.andWhere('complaints_status', '=', status);
       }
 
       if (sys_reason) {
-        qb.orWhere('system_sub_reason', '=', sys_reason);
+        qb.andWhere('system_sub_reason', '=', sys_reason);
       }
 
       if (ai_classification) {
-        qb.orWhere('ai_classification', '=', ai_classification);
+        qb.andWhere('ai_classification', '=', ai_classification);
       }
     })
     .then(items => {
@@ -143,7 +143,7 @@ const closeComplaints = (req, res, db) => {
 }
 
 const deleteComplaints = (req, res, db) => {
-  const { id } = req.body
+  const id = req.params.id
   db('complaints').where({ id }).del()
     .then(() => {
       res.json({ delete: 'true' })
