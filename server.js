@@ -10,13 +10,18 @@ const morgan = require('morgan')
 const swaggerUi = require('swagger-ui-express'),
 swaggerDocument = require('./swagger.json');
 
+const host = `${process.env.RA_API_DB_HOST || '127.0.0.1'}`
+const user = `${process.env.RA_API_DB_USER || 'root'}`
+const password = `${process.env.RA_API_DB_PASS || 'root'}`
+const database = `${process.env.RA_API_DB_NAME || 'ra_collector'}`
+
 var db = require('knex')({
   client: 'mysql2',
   connection: {
-    host : '127.0.0.1',
-    user : 'root',
-    password : 'root',
-    database : 'ra_collector'
+    host : host,
+    user : user,
+    password : password,
+    database : database
   }
 });
 
@@ -56,6 +61,6 @@ app.put('/complaints/:id/close', (req, res) => complaints.closeComplaints(req, r
 app.put('/complaints/:id', (req, res) => complaints.putAllData(req, res, db))
 app.delete('/complaints/:id', (req, res) => complaints.deleteComplaints(req, res, db))
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`app is running on port ${process.env.PORT || 3000}`)
+app.listen(process.env.RA_API_PORT || 3000, () => {
+  console.log(`app is running on port ${process.env.RA_API_PORT || 3000}`)
 })
