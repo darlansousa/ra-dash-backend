@@ -27,6 +27,7 @@ var db = require('knex')({
 
 
 const complaints = require('./controllers/complaints')
+const classifications = require('./controllers/complaints-classifications')
 
 
 const app = express()
@@ -60,6 +61,8 @@ app.get('/complaints/:id', (req, res) => complaints.getComplaintsById(req, res, 
 app.put('/complaints/:id/close', (req, res) => complaints.closeComplaints(req, res, db))
 app.put('/complaints/:id', (req, res) => complaints.putAllData(req, res, db))
 app.delete('/complaints/:id', (req, res) => complaints.deleteComplaints(req, res, db))
+
+app.get('/classifications', (req, res) => classifications.getComplaintsClassifications(req, res, db))
 
 app.listen(process.env.RA_API_PORT || 3000, () => {
   console.log(`app is running on port ${process.env.RA_API_PORT || 3000}`)
