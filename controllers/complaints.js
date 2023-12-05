@@ -1,5 +1,9 @@
+var fs = require('fs');
+var path = process.cwd();
+const query = fs.readFileSync(path + "/report/query.sql");
+
 const getComplaints = (req, res, db) => {
-  const {status, sys_reason, ai_classification} = req.query
+  const { status, sys_reason, ai_classification } = req.query
   db.select('*').from('complaints')
     .innerJoin('complainers', 'complainers.id', 'complaints.complainer_id')
     .where((qb) => {
@@ -25,33 +29,60 @@ const getComplaints = (req, res, db) => {
     .catch(err => res.status(400).json({ dbError: 'db error:' + err }))
 }
 
+const getComplaintsToExport = (req, res, db) => {
+  db.raw(query.toString())
+    .then(items => {
+      if (items.length) {
+        res.json(items[0])
+      } else {
+        res.json([])
+      }
+    })
+    .catch(err => res.status(400).json({ dbError: 'db error:' + err }))
+}
+
 const getComplaintsInfo = (req, res, db) => {
 
   var all = db.from('complaints')
-  .count('*')
-  .as('all');
+    .count('*')
+    .as('all');
 
   var pending = db.from('complaints')
-  .count('*').where({'complaints_status': 'pending'})
-  .as('pending');
+    .count('*').where({ 'complaints_status': 'pending' })
+    .as('pending');
 
   var closed = db.from('complaints')
-  .count('*').where({'complaints_status': 'closed'})
-  .as('closed');
+    .count('*').where({ 'complaints_status': 'closed' })
+    .as('closed');
 
   var ai_review = db.from('complaints')
-  .count('*').whereNot({'ai_classification': null})
-  .as('ai_review');
+    .count('*').whereNot({ 'ai_classification': null })
+    .as('ai_review');
 
   var pending_process = db.from('complaints_process')
-  .count('*').where({'status': 'pending'})
-  .as('pending_process');
-   
+    .count('*').where({ 'status': 'pending' })
+    .as('pending_process');
+
   db.select(all, closed, pending, ai_review, pending_process).from('complaints').limit(1)
     .then(items => {
-        res.json(items[0])
+      res.json(items[0])
     })
     .catch(err => res.status(400).json({ dbError: 'db error:' + err }))
+}
+
+const getComplaintsAIClassifications = (req, res, db) => {
+  db.raw(`
+  SELECT 
+   ai_classification classification,
+   count(*) AS count
+   FROM complaints 
+  WHERE ai_classification IS NOT NULL 
+  GROUP BY ai_classification
+  `)
+  .then(items => {
+    res.json(items[0])
+  })
+  .catch(err => res.status(400).json({ dbError: 'db error:' + err }))
 }
 
 const getComplaintsById = (req, res, db) => {
@@ -70,6 +101,7 @@ const getComplaintsById = (req, res, db) => {
 }
 
 const putAllData = (req, res, db) => {
+  let close_date_db = null
   const id = req.params.id
   const {
     ra_cod,
@@ -87,7 +119,10 @@ const putAllData = (req, res, db) => {
     ai_classification,
     negotiate_again
   } = req.body
-  const close_date_db = close_date.split('T')[0]
+  if (close_date) {
+    close_date_db = close_date.split('T')[0]
+  }
+
   const {
     complainer_id,
     name,
@@ -106,7 +141,7 @@ const putAllData = (req, res, db) => {
     reason,
     description,
     id_occurrence,
-    close_date: close_date_db,
+    close_date: close_date_db ? close_date_db : null,
     system_sub_reason,
     complainer_note,
     complaints_status,
@@ -121,9 +156,10 @@ const putAllData = (req, res, db) => {
         city,
         email,
         phone,
-        is_client })
+        is_client
+      })
         .then(() => getComplaintsById(req, res, db))
-        .catch(err => res.status(400).json({ dbError: 'db error update user' + err}))
+        .catch(err => res.status(400).json({ dbError: 'db error update user' + err }))
     })
     .catch(err => res.status(400).json({ dbError: 'db error update complaint' + err }))
 }
@@ -154,6 +190,8 @@ const deleteComplaints = (req, res, db) => {
 module.exports = {
   getComplaints,
   getComplaintsInfo,
+  getComplaintsAIClassifications,
+  getComplaintsToExport,
   getComplaintsById,
   deleteComplaints,
   closeComplaints,

@@ -28,6 +28,8 @@ var db = require('knex')({
 
 const complaints = require('./controllers/complaints')
 const classifications = require('./controllers/complaints-classifications')
+const export_items = require('./controllers/exports')
+const dashboard = require('./controllers/dashboard')
 
 
 const app = express()
@@ -57,12 +59,19 @@ app.get('/', (req, res) => res.send('RA-Dash-Backend'))
 
 app.get('/complaints', (req, res) => complaints.getComplaints(req, res, db))
 app.get('/complaints/info', (req, res) => complaints.getComplaintsInfo(req, res, db))
+app.get('/complaints/ai', (req, res) => complaints.getComplaintsAIClassifications(req, res, db))
+app.get('/complaints/export', (req, res) => complaints.getComplaintsToExport(req, res, db))
 app.get('/complaints/:id', (req, res) => complaints.getComplaintsById(req, res, db))
 app.put('/complaints/:id/close', (req, res) => complaints.closeComplaints(req, res, db))
 app.put('/complaints/:id', (req, res) => complaints.putAllData(req, res, db))
 app.delete('/complaints/:id', (req, res) => complaints.deleteComplaints(req, res, db))
 
 app.get('/classifications', (req, res) => classifications.getComplaintsClassifications(req, res, db))
+
+app.post('/exports', (req, res) => export_items.insertExports(req, res, db))
+
+app.get('/dash', (req, res) => dashboard.getDataAnalysis(req, res, db))
+
 
 app.listen(process.env.RA_API_PORT || 3000, () => {
   console.log(`app is running on port ${process.env.RA_API_PORT || 3000}`)
