@@ -1,9 +1,11 @@
+const db = require('../../config/database');
+
 const getRandomColor = () => {
     const randomColor = Math.floor(Math.random() * 16777215).toString(16);
     return "#" + randomColor;
 }
 
-const getDataAnalysis = (req, res, db) => {
+module.exports = (req, res, db) => {
     res.json({
         "total": "573",
         "closed": "472",
@@ -67,8 +69,4 @@ const getDataAnalysis = (req, res, db) => {
             { "reason": "Indicação", "count": 8 },
         ]
     })
-}
-
-module.exports = {
-    getDataAnalysis
 }
