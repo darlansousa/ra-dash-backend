@@ -1,5 +1,6 @@
 const server_port = process.env.RA_API_PORT || 3000
 const express = require('express');
+const cron = require("node-cron");
 const routes = require('./routes');
 const bodyParser = require('body-parser');
 const helmet = require('helmet')
@@ -25,6 +26,12 @@ app.use(bodyParser.json())
 app.use(morgan('combined')) 
 
 app.use('/', routes);
+
+jobs = require('./jobs')
+
+jobs()
+//cron.schedule("* * * * *", jobs);
+
 
 const startServer = (port = server_port) => {
     const server = app.listen(port, function () {
