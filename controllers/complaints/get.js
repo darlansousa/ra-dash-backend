@@ -22,6 +22,11 @@ module.exports = (req, res) => {
             }
         })
         .then(items => {
+            if(_id) {
+                res.json(items[0])
+                return
+            }
+
             if (items.length) {
                 res.json(items)
             } else {

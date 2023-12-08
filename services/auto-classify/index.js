@@ -8,12 +8,14 @@ module.exports = () => {
     get(5, (complaints) => {
         complaints.forEach(complaint => {
             classifier('valentini', complaint, (response) => {
-                const  analysis = response.data
-                update(analysis.analyzed_item.id, analysis.category.description, (saved) =>{
-                    if(saved) {
-                        console.log(`Classifiead: ${analysis.analyzed_item.id} as ${analysis.category.description}`)
-                    }
-                })
+                if(response.status = 200) {
+                    const  analysis = response.data
+                    update(analysis.analyzed_item.id, analysis.category.description, (saved) =>{
+                        if(saved) {
+                            console.log(`Classifiead: ${analysis.analyzed_item.id} as ${analysis.category.description}`)
+                        }
+                    })
+                }
             })
         });
     })
