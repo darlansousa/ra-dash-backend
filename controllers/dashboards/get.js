@@ -1,72 +1,53 @@
 const db = require('../../config/database');
 
-const getRandomColor = () => {
-    const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-    return "#" + randomColor;
-}
+var fs = require('fs');
+var path = process.cwd();
+const big_numbers = fs.readFileSync(path + "/controllers/dashboards/querys/big_numbers.sql");
+const count_by_month = fs.readFileSync(path + "/controllers/dashboards/querys/count_by_month.sql");
+const notes_by_month = fs.readFileSync(path + "/controllers/dashboards/querys/notes_by_month.sql");
+const service_time_by_month = fs.readFileSync(path + "/controllers/dashboards/querys/service_time_by_month.sql");
+const count_by_state = fs.readFileSync(path + "/controllers/dashboards/querys/count_by_state.sql");
+const count_by_reason = fs.readFileSync(path + "/controllers/dashboards/querys/count_by_reason.sql");
+const percentage_nps = fs.readFileSync(path + "/controllers/dashboards/querys/percentage_nps.sql");
 
-module.exports = (req, res, db) => {
-    res.json({
-        "total": "573",
-        "closed": "472",
-        "nps": "1.52%",
-        "count_by_month": [
-            { "month": "Janeiro", "count": 20 },
-            { "month": "Fevereiro", "count": 30 },
-            { "month": "Março", "count": 31 },
-            { "month": "Abril", "count": 21 },
-            { "month": "Maio", "count": 35 },
-            { "month": "Junho", "count": 21 },
-            { "month": "Julho", "count": 53 },
-            { "month": "Agosto", "count": 97 },
-            { "month": "Setembro", "count": 83 },
-            { "month": "Outubro", "count": 58 },
-            { "month": "Novembro", "count": 96 },
-        ],
-        "notes_by_month": [
-            { "month": "Janeiro", "avg": 3.60 },
-            { "month": "Fevereiro", "avg": 4.24 },
-            { "month": "Março", "avg": 5.13 },
-            { "month": "Abril", "avg": 9.95 },
-            { "month": "Maio", "avg": 9.54 },
-            { "month": "Junho", "avg": 3.14 },
-            { "month": "Julho", "avg": 2.19 },
-            { "month": "Agosto", "avg": 3.11 },
-            { "month": "Setembro", "avg": 2.32 },
-            { "month": "Outubro", "avg": 2.84 },
-            { "month": "Novembro", "avg": 8.33 },
-        ],
-        "service_time_by_month": [
-            { "month": "Janeiro", "avg": 9.07 },
-            { "month": "Fevereiro", "avg": 4.69 },
-            { "month": "Março", "avg": 3.58 },
-            { "month": "Abril", "avg": 2.76 },
-            { "month": "Maio", "avg": 5.26 },
-            { "month": "Junho", "avg": 7.45 },
-            { "month": "Julho", "avg": 6.25 },
-            { "month": "Agosto", "avg": 4.92 },
-            { "month": "Setembro", "avg": 4.02 },
-            { "month": "Outubro", "avg": 5.30 },
-            { "month": "Novembro", "avg": 9.33 },
-        ],
-        "count_by_state": [
-            { "name": "DF", "count": 3, "fill": getRandomColor() },
-            { "name": "CE", "count": 7, "fill": getRandomColor() },
-            { "name": "MS", "count": 9, "fill": getRandomColor() },
-            { "name": "PE", "count": 18, "fill": getRandomColor() },
-            { "name": "MG", "count": 432, "fill": getRandomColor() },
-        ],
-        "count_by_reason": [
-            { "reason": "Multa/Cancelamento", "count": 224 },
-            { "reason": "Outros", "count": 55 },
-            { "reason": "Economia", "count": 36 },
-            { "reason": "Prazo de conexão", "count": 35 },
-            { "reason": "Resgate", "count": 29 },
-            { "reason": "Cobrança Indevida", "count": 26 },
-            { "reason": "Portal/App", "count": 19 },
-            { "reason": "Consumo - baixa injeção", "count": 15 },
-            { "reason": "Atendimento", "count": 9 },
-            { "reason": "Indicação", "count": 8 },
-        ]
-    })
+
+module.exports = (req, res) => {
+    const type = req.headers['chart_type'];
+    var query = '';
+
+    switch (type) {
+        case "big_numbers":
+            query = big_numbers
+            break;
+        case "count_by_month":
+            query = count_by_month
+            break;
+        case "notes_by_month":
+            query = notes_by_month
+            break;
+        case "service_time_by_month":
+            query = service_time_by_month
+            break;
+        case "count_by_state":
+            query = count_by_state
+            break;
+        case "count_by_reason":
+            query = count_by_reason
+            break;
+        case "percentage_nps":
+            query = percentage_nps
+            break;
+        default:
+            query = big_numbers
+    }
+
+    db.raw(query.toString())
+        .then(items => {
+            if (items.length) {
+                res.json(items[0])
+            }
+        })
+        .catch(err => res.status(400).json({ dbError: 'db error:' + err }))
+
+
 }

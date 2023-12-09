@@ -1,0 +1,1 @@
+SELECT month_desc name, count(1) as value FROM complaints_analysis GROUP BY month_desc;
